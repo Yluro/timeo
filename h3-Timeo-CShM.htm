@@ -1,0 +1,86 @@
+<!-- #include tool-h3 gui\blocks\tool-h3.htm;image=#image;colspan=1;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CShM_Status; help_ext=Cosmochlore_Status;1; -->
+  $+
+    spy.Timeo.cosmochlore_status_html()
+  $-
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CShM_1; help_ext=CShM_1;1; -->
+  $+
+    html.Snippet(GetVar(default_link),
+    "value=Run CShM",
+    "onclick=spy.Timeo.autoCSHM()",
+  )$-
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CShM_2; help_ext=CShM_2;1; -->
+  <td align='left' width="100%"><b>CShM Options:</b></td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CShM_3; help_ext=CShM_3;1; -->
+  <td align='left' width="15%"><b>Results .csv: </b></td>
+    $+
+      html.Snippet("gui/snippets/input-checkbox-td",
+      "name=CSHM_TABLE",
+      "checked=spy.GetParam('timeo.cosmochlore.cshm.table', False)",
+      "onclick=spy.SetParam('timeo.cosmochlore.cshm.table', html.GetState('~name~'))",
+      "td1=<td align='left' width="5%">"
+      )
+    $-
+  <td align='left' width="23%"><b>Ideal polyhedra .xyz: </b></td>
+    $+
+      html.Snippet("gui/snippets/input-checkbox-td",
+      "name=CSHM_IDEAL",
+      "checked=spy.GetParam('timeo.cosmochlore.cshm.ideal', False)",
+      "onclick=spy.SetParam('timeo.cosmochlore.cshm.ideal', html.GetState('~name~'))",
+      "td1=<td align='left' width="15%">"
+      )
+    $-
+  <td align='right' width="25%"></td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=Ideal_polyhedra; help_ext=Ideal_polyhedra;1; -->
+  <td align='left' width="35%"><b>Show Ideal Polyhedra: </b></td>
+    $+
+      html.Snippet("gui/snippets/input-checkbox-td",
+      "name=IDEAL_SHOW",
+      "checked=spy.GetParam('timeo.overlay.show', False)",
+      "onclick=spy.Timeo.show_ideal_overlay(html.GetState('~name~'))",
+      "td1=<td align='left' width="10%">"
+      )
+    $-
+  <td align='right' width="55%"></td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #includeif spy.Timeo.ideal_overlay_shown() timeo-ideal-polyhedra $GetVar(Timeo_plugin_path)\Timeo-IdealPolyhedra.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CShM_4; help_ext=CShM_4;1; -->
+  <td align='left' width="100%"><b>User defined Shapes:</b></td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CShM_5; help_ext=CShM_5;1; -->
+  <td align='left' width="100%">
+    $+
+      spy.Timeo.user_shapes_checkboxes_html()
+    $-
+  </td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CShM_6; help_ext=CShM_6;1; -->
+  <td align='left' width="100%">
+    <a href="spy.Timeo.open_user_shapes_folder()">Open user defined shapes folder</a>
+  </td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CShM_7; help_ext=CShM_7;1; -->
+  <td align='left' width="100%"><b>CShM runs on this structure:</b></td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CShM_8; help_ext=CShM_8;1; -->
+  <td align='left' width="100%">
+    $+
+      spy.Timeo.cshm_runs_html()
+    $-
+  </td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->

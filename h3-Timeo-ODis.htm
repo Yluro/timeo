@@ -1,0 +1,41 @@
+<!-- #include tool-h3 gui\blocks\tool-h3.htm;image=#image;colspan=1;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=ODis_Status; help_ext=Cosmochlore_Status;1; -->
+  $+
+    spy.Timeo.cosmochlore_status_html()
+  $-
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=ODis_1; help_ext=ODis_1;1; -->
+  $+
+    html.Snippet(GetVar(default_link),
+    "value=Run ODis",
+    "onclick=spy.Timeo.autoODIS()",
+  )$-
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=ODis_2; help_ext=ODis_2;1; -->
+  <td align='left' width="100%"><b>ODis Options:</b></td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=ODis_3; help_ext=ODis_3;1; -->
+  <td align='Left' width="15%"><b>Results .csv:</b></td>
+    $+
+      html.Snippet("gui/snippets/input-checkbox-td",
+      "name=ODIS_TABLE",
+      "checked=spy.GetParam('timeo.cosmochlore.odis.table', False)",
+      "onclick=spy.SetParam('timeo.cosmochlore.odis.table', html.GetState('~name~'))",
+      "td1=<td align='left' width="5%">"
+      )
+    $-
+  <td align='Left' width="15%"><b>Full analysis:</b></td>
+    $+
+      html.Snippet("gui/snippets/input-checkbox-td",
+      "name=ODIS_FULL",
+      "checked=spy.GetParam('timeo.cosmochlore.odis.full', False)",
+      "onclick=spy.SetParam('timeo.cosmochlore.odis.full', html.GetState('~name~'))",
+      "td1=<td align='left' width="15%">"
+      )
+    $-
+  <td align='right' width="30%"></td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->

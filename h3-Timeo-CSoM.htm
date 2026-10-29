@@ -1,0 +1,138 @@
+<!-- #include tool-h3 gui\blocks\tool-h3.htm;image=#image;colspan=1;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CSoM_Status; help_ext=Cosmochlore_Status;1; -->
+  $+
+    spy.Timeo.cosmochlore_status_html()
+  $-
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CSoM_1; help_ext=CSoM_1;1; -->
+  $+
+    html.Snippet(GetVar(default_link),
+    "value=Run CSoM",
+    "onclick=spy.Timeo.autoCSOM()",
+  )$-
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CSoM_2; help_ext=CSoM_2;1; -->
+  <td align='left' width="100%"><b>CSoM Options:</b></td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CSoM_3; help_ext=CSoM_3;1; -->
+  <td align='left' width="16%"><b>Point groups: </b></td>
+    $+
+      html.Snippet("gui/snippets/input-text-td",
+      "name=CSOM_PG",
+      "value=spy.GetParam('timeo.cosmochlore.csom.point_groups', '')",
+      "onchange=spy.SetParam('timeo.cosmochlore.csom.point_groups', html.GetValue('~name~'))",
+      "td1=<td align='left' width="40%">"
+      )
+    $-
+  <td align='left' width="40%"></td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CSoM_4; help_ext=CSoM_4;1; -->
+  <td align='left' width="20%"><b>Centering mode: </b></td>
+  <td align='left' width="15%">
+    $+
+      html.Snippet("gui/snippets/input-combo",
+      "name=CSOM_MODE",
+      "width=90",
+      "items='auto;first;centroid;manual'",
+      "value=spy.GetParam('timeo.cosmochlore.csom.mode', 'auto')",
+      "onchange=spy.SetParam('timeo.cosmochlore.csom.mode', html.GetValue('~name~'))",
+      )
+    $-
+  </td>
+  <td align='left' width="5%"></td>
+  <td align='right' width="25%"><b>Manual vector (x y z): </b></td>
+    $+
+      html.Snippet("gui/snippets/input-text-td",
+      "name=CSOM_VECTOR",
+      "value=spy.GetParam('timeo.cosmochlore.csom.vector', '')",
+      "onchange=spy.SetParam('timeo.cosmochlore.csom.vector', html.GetValue('~name~'))",
+      "td1=<td align='left' width="25%">"
+      )
+    $-
+  <td align='left' width="20%"></td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CSoM_5; help_ext=CSoM_5;1; -->
+  <td align='left' width="17%"><b>Summary .csv: </b></td>
+    $+
+      html.Snippet("gui/snippets/input-checkbox-td",
+      "name=CSOM_TABLE",
+      "checked=spy.GetParam('timeo.cosmochlore.csom.table', False)",
+      "onclick=spy.SetParam('timeo.cosmochlore.csom.table', html.GetState('~name~'))",
+      "td1=<td align='left'>"
+      )
+    $-
+  <td align='left' width="32%"><b>Per-operation details .csv:</b></td>
+    $+
+      html.Snippet("gui/snippets/input-checkbox-td",
+      "name=CSOM_FULL",
+      "checked=spy.GetParam('timeo.cosmochlore.csom.full', False)",
+      "onclick=spy.SetParam('timeo.cosmochlore.csom.full', html.GetState('~name~'))",
+      "td1=<td align='left'>"
+      )
+    $-
+  <td align='left' width="25%"><b>Operated .xyz/.mol2:</b></td>
+    $+
+      html.Snippet("gui/snippets/input-checkbox-td",
+      "name=CSOM_OPERATED",
+      "checked=spy.GetParam('timeo.cosmochlore.csom.operated', False)",
+      "onclick=spy.SetParam('timeo.cosmochlore.csom.operated', html.GetState('~name~'))",
+      "td1=<td align='left'>"
+      )
+    $-
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CSoM_6; help_ext=CSoM_6;1; -->
+  <td align='left' width="22%"><b>Ignore atom labels:</b></td>
+    $+
+      html.Snippet("gui/snippets/input-checkbox-td",
+      "name=CSOM_IGNORE_LABELS",
+      "checked=spy.GetParam('timeo.cosmochlore.csom.ignore_labels', False)",
+      "onclick=spy.SetParam('timeo.cosmochlore.csom.ignore_labels', html.GetState('~name~'))",
+      "td1=<td align='left' width="50%">"
+      )
+    $-
+  <td align='right' width="50%"></td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CSoM_7; help_ext=CSoM_7;1; -->
+  <td align='left' width="10%"><b>Seeds: </b></td>
+    $+
+      html.Snippet("gui/snippets/input-spin-td",
+      "name=CSOM_SEEDS",
+      "value=spy.GetParam('timeo.cosmochlore.csom.seeds')",
+      "onchange=spy.SetParam('timeo.cosmochlore.csom.seeds', html.GetValue('~name~'))",
+      "min=1",
+      "max=1000",
+      "td1=<td align='left' width="13%">"
+      )
+    $-
+  <td align='right' width="17%"><b>Iterations: </b></td>
+    $+
+      html.Snippet("gui/snippets/input-spin-td",
+      "name=CSOM_ITERATIONS",
+      "value=spy.GetParam('timeo.cosmochlore.csom.iterations')",
+      "onchange=spy.SetParam('timeo.cosmochlore.csom.iterations', html.GetValue('~name~'))",
+      "min=1",
+      "max=10000",
+      "td1=<td align='left' width="15%">"
+      )
+    $-
+  <td align='right' width="21%"><b>Tolerance: 1e-</b></td>
+    $+
+      html.Snippet("gui/snippets/input-spin-td",
+      "name=CSOM_TOLERANCE_EXPONENT",
+      "value=spy.GetParam('timeo.cosmochlore.csom.tolerance_exponent')",
+      "onchange=spy.SetParam('timeo.cosmochlore.csom.tolerance_exponent', html.GetValue('~name~'))",
+      "min=1",
+      "max=15",
+      "td1=<td align='left' width="11%">"
+      )
+    $-
+  <td width="13%"></td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->

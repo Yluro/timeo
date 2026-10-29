@@ -1,5 +1,5 @@
 
   p_name = Timeo
   p_htm = Timeo
-  p_img = [("Timeo",'h1'), ("SHAPE 2.1",'h3'), ("OctaDist",'h3'), ("Cosmochlore",'h3'), ("Options",'h3')]
+  p_img = [("Timeo",'h1'), ("Continuous Shape Measures",'h3'), ("Continuous Symmetry Operation Measures",'h3'), ("Octahedral Distortion Parameters",'h3'), ("Other programs",'h3'), ("Options",'h3')]
   p_scope = timeo

@@ -13,7 +13,7 @@ _Almost_ all functions of Timeo are accessible through the GUI panel.
 
 **[Cosmochlore](https://github.com/Yluro/cosmochlore) integration:**
 
-Cosmochlore was developed in parallel to Timeo to organically integrate into it. All options of cosmochlore can be accessed through the Cosmochlore tab.
+Cosmochlore was developed in parallel to Timeo to organically integrate into it. All options of cosmochlore can be accessed through the Continuous Shape Measures, Continuous Symmetry Operation Measures and Octahedral Distortion Parameters tabs.
 
 **SHAPE 2.1 wrapper:**
 
@@ -88,13 +88,33 @@ _**Note:** I push development changes constantly to the master branch. You could
 2. Select the atoms you want to include in the measurement.
  - If one atom is selected, the neighbouring atoms will be taken into account to form a centered shape (e.g. a coordination structure).
  - If multiple atoms are selected, they will be interpreted as a non-centered shape (e.g. a borane cluster).
-4. Run any of the cosmochlore functions from the Olex2 console or from the Tools/Timeo/Cosmochlore panel.
+4. Run any of the cosmochlore functions from the Olex2 console or from its own tab in the Tools/Timeo panel.
 5. Results are printed to the console and saved in `<FilePath>/cosmochlore/`.
 
 
 
+### CShM runs table
+The bottom of the Continuous Shape Measures tab lists every CShM run saved for the structure: one row per measured centre and disorder component, found as `_ideal.xyz` or `_cshm_table.csv` files in `<FilePath>/cosmochlore/`. Runs that saved neither are not listed. Per run:
+- `Shape`: the run's shapes, best (lowest CShM) first. `CShM` shows the value for the one picked, which is also the shape drawn.
+- `Delete`: deletes the run's `_ideal.xyz` and `_cshm_table.csv` after asking, plus its input `.xyz` unless a CSoM or ODis output of the same centre still uses it.
+
+### Ideal polyhedra in the model
+Tick `Show Ideal Polyhedra` in the CShM options to draw the ideal polyhedra from CShM over the structure. Every run in the table with an `_ideal.xyz` is drawn at once and redrawn after each new run. While the box is ticked the drawing settings appear, and the runs table gets a `Draw` column to leave runs out:
+- `Opacity %`: face transparency. Set it to 0 to draw only edges and vertices.
+- `Edges` and `Vertex spheres`: draw the polyhedron edges and mark the ideal vertex positions.
+- `Colour by`: `shape` gives every shape its own colour, so centres are easy to compare; `centre` gives every run its own colour; `element` uses the colour Olex2 draws the central atom in.
+
+Opacity, edges, vertex spheres and colour are saved between sessions; the runs table's shape and Draw choices last for the session.
+
+| Function                                | Description                                                                         |
+|-----------------------------------------|-------------------------------------------------------------------------------------|
+| `spy.Timeo.draw_ideal()`                | Draws the chosen shape of every ticked run with the current settings.               |
+| `spy.Timeo.clear_ideal()`               | Hides every drawn ideal polyhedron.                                                 |
+
+The overlay uses Olex2's built-in `AddObject` user objects, which disappear when another structure is loaded.
+
 ### User-defined shapes
-Reference shapes beyond the built-in 90 can be added as `.yaml` files in the `user_shapes/` folder of the plugin (`Open user defined shapes folder` in the CShM panel). A mismatched vertex count is reported as an error by `cosmochlore` itself.
+Reference shapes beyond the built-in 90 can be added as `.yaml` files in the `user_shapes/` folder of the plugin (`Open user defined shapes folder` in the Continuous Shape Measures tab). A mismatched vertex count is reported as an error by `cosmochlore` itself.
 
 ## AutoSHAPE
 [SHAPE 2.1](https://www.ee.ub.edu/continuous-shape-and-symmetry-measures/)$^2$ is a software published by ESG used to calculate Continuous Shape Measures (CShM's). `autoSHAPE` is a collection of personal Python scripts I developed and used to run and parse SHAPE i/o files. Timeo contains an implementation of `autoSHAPE` to:
@@ -106,7 +126,7 @@ SM's autoSHAPE does not overwrite previous runs as it stores each run in a dedic
 
 ### Usage
  1. `autoSHAPE` uses the same selection criteria as `cosmochlore`. Select a single atom for a centered measurement or multiple for a non-centered one.
- 2. Run `spy.Timeo.autoSHAPE()` from the Olex2 command line or from the Tools/Timeo/SHAPE 2.1 panel.
+ 2. Run `spy.Timeo.autoSHAPE()` from the Olex2 command line or from the Tools/Timeo/Other programs panel.
 
 ## Octahedral Distortion Parameters.
 Timeo includes a reimplementation of the [OctaDist](https://octadist.github.io/)$^3$ algorithm. Unlike the original implementation, this version identifies opposite faces and vertices of an octahedron using topological criteria. It relies on constructing a convex hull that is topologically equivalent to an octahedron. As a result, the algorithm may fail when more than three vertices are coplanar, causing the convex hull to degenerate into a different polyhedral shape.
@@ -156,7 +176,7 @@ where $\vec{r}_M$ is the position of the metal and $\vec{r}_i$ are the position 
 ### Usage
 1. Open a structure in Olex2.
 2. Select the central atom of a 6-coordinate complex.
-3. Run `spy.Timeo.autoOCTADIST()` from the Olex2 console or from the Tools/Timeo panel.
+3. Run `spy.Timeo.autoOCTADIST()` from the Olex2 console or from the Tools/Timeo/Other programs panel.
 4. Results are printed in the console. A graph will be saved in `<FilePath>/OH_distortion` showing the extracted octahedron. 
 
 

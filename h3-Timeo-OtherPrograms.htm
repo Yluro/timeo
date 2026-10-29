@@ -1,0 +1,32 @@
+<!-- #include tool-h3 gui\blocks\tool-h3.htm;image=#image;colspan=1;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=SHAPE; help_ext=SHAPE_2.1;1; -->
+  <td align='left' width="100%"><b><u>SHAPE 2.1</u></b></td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=SHAPE_Status; help_ext=SHAPE_Status;1; -->
+  $+
+    spy.Timeo.shape_status_html()
+  $-
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=SHAPE_1; help_ext=SHAPE_1;1; -->
+  $+
+    html.Snippet(GetVar(default_link),
+    "value=SHAPE analysis",
+    "onclick=spy.Timeo.autoSHAPE()",
+  )$-
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=OctaDist; help_ext=OctaDist;1; -->
+  <td align='left' width="100%"><b><u>OctaDist</u></b></td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=OctaDist_1; help_ext=OctaDist_1;1; -->
+  $+
+    html.Snippet(GetVar(default_link),
+    "value=Octahedral distortion",
+    "onclick=spy.Timeo.autoOCTADIST()",
+  )$-
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
