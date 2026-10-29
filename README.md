@@ -60,6 +60,8 @@ _**Note:** It is known that SHAPE 2.1 gives trouble in Mac machines with operati
 5. Extract the downloaded zip and drop the contents of the `timeo-X.X.X` folder, into `plugin-Timeo` so that `Timeo.py` sits directly at `<BaseDir>\util\pyUtil\PluginLib\plugin-Timeo\Timeo.py`.
 6. On restarting Olex2, a Timeo panel should appear under the Tools tab.
 
+Timeo checks GitHub once a day for a newer release and prints a note in the Olex2 console when one is out. Untick `Check for updates` under `Options` to turn this off.
+
 **Troubleshooting:** 
  - _If the panel does not appear, the Olex2 console prints `Failed to load plugin 'X'`. `No module named 'X'` means the name in `plugins.xld` does not match `<BaseDir>\util\pyUtil\PluginLib\plugin-X\X.py` letter for letter (including case), or `Timeo.py` is nested one folder too deep._
  - _Make sure `plugins.xld` is not saved as `plugins.xld.txt`._
