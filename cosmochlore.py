@@ -33,6 +33,12 @@ POINT_GROUPS = {
 
 CENTERING_MODES = {'auto', 'first', 'centroid', 'manual'}
 
+# Olex2 has no console, so Windows would pop up a console window for every cosmochlore run.
+_NO_WINDOW = getattr(subprocess, 'CREATE_NO_WINDOW', 0)
+
+# (exe_path, mtime) -> version, so redrawing the GUI does not rerun `cosmochlore --version`.
+_version_cache = {}
+
 
 class CosmochloreError(Exception):
     """Raised for anything that stops a cosmochlore run: not found, too old,
@@ -43,15 +49,23 @@ def get_version(exe_path):
     """Returns the (major, minor, patch) version of `exe_path`, or None if it
     could not be run or its output could not be parsed."""
     try:
+        key = (exe_path, os.path.getmtime(exe_path))
+    except OSError:
+        return None
+    if key in _version_cache:
+        return _version_cache[key]
+
+    try:
         result = subprocess.run([exe_path, '--version'], capture_output=True,
-                                text=True, timeout=10)
+                                text=True, timeout=10, creationflags=_NO_WINDOW)
     except (OSError, subprocess.SubprocessError):
         return None
 
     for line in reversed(result.stdout.splitlines()):
         match = re.search(r'(\d+)\.(\d+)\.(\d+)\s*$', line.strip())
         if match:
-            return tuple(int(g) for g in match.groups())
+            _version_cache[key] = tuple(int(g) for g in match.groups())
+            return _version_cache[key]
     return None
 
 
@@ -118,7 +132,7 @@ def run_cosmochlore(exe, args, cwd=None, timeout=300) -> str:
     """
     try:
         result = subprocess.run([exe] + args, cwd=cwd, capture_output=True,
-                                text=True, timeout=timeout)
+                                text=True, timeout=timeout, creationflags=_NO_WINDOW)
     except subprocess.TimeoutExpired:
         raise CosmochloreError(f'cosmochlore timed out after {timeout}s (args: {args}).')
     except OSError as e:

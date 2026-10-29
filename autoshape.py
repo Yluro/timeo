@@ -12,6 +12,9 @@ import numpy as np
 from constants import REF_SHAPE_DICT
 from selection import MolecularStructure
 
+# Olex2 has no console, so Windows would pop up a console window for every SHAPE run.
+_NO_WINDOW = getattr(subprocess, 'CREATE_NO_WINDOW', 0)
+
 
 class ShapeCalculation:
     """Builds the .dat input file SHAPE 2.1 expects for one structure."""
@@ -126,9 +129,9 @@ def run_shape(folder, exe='shape') -> List[str]:
     print("Running SHAPE...")
     dat_files = [f for f in os.listdir(folder) if f.endswith('.dat')]
     for file in dat_files:
-        process = subprocess.Popen(f'"{exe}"', shell=True, stdin=subprocess.PIPE,
+        process = subprocess.Popen([exe], stdin=subprocess.PIPE,
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                   text=True, cwd=folder)
+                                   text=True, cwd=folder, creationflags=_NO_WINDOW)
         out, err = process.communicate(input=f'{file}\n')  # Send the file name and an Enter key
         print(out)
 
