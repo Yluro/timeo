@@ -40,21 +40,6 @@
   <td align='right' width="25%"></td>
 <!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
 
-<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=Ideal_polyhedra; help_ext=Ideal_polyhedra;1; -->
-  <td align='left' width="35%"><b>Show Ideal Polyhedra: </b></td>
-    $+
-      html.Snippet("gui/snippets/input-checkbox-td",
-      "name=IDEAL_SHOW",
-      "checked=spy.GetParam('timeo.overlay.show', False)",
-      "onclick=spy.Timeo.show_ideal_overlay(html.GetState('~name~'))",
-      "td1=<td align='left' width="10%">"
-      )
-    $-
-  <td align='right' width="55%"></td>
-<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
-
-<!-- #includeif spy.Timeo.ideal_overlay_shown() timeo-ideal-polyhedra $GetVar(Timeo_plugin_path)\Timeo-IdealPolyhedra.htm;1; -->
-
 <!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=CShM_4; help_ext=CShM_4;1; -->
   <td align='left' width="100%"><b>User defined Shapes:</b></td>
 <!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
@@ -84,3 +69,5 @@
     $-
   </td>
 <!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
+<!-- #includeif spy.Timeo.ideal_settings_shown() timeo-ideal-polyhedra $GetVar(Timeo_plugin_path)\Timeo-IdealPolyhedra.htm;1; -->
