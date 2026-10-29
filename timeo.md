@@ -1,6 +1,9 @@
 #Timeo Plugin
 Shape and symmetry analysis: a SHAPE 2.1 wrapper, an octahedral distortion calculator, and a cosmochlore integration (CShM, CSoM, ODis). URL[https://github.com/Yluro/cosmochlore]
 
+#Other programs
+Tools that do not use cosmochlore: the SHAPE 2.1 wrapper and the OctaDist reimplementation.
+
 #SHAPE 2.1
 SHAPE 2.1 wrapper: Continuous Shape Measures against the built-in reference polyhedra.
 
@@ -31,15 +34,15 @@ Exclude any selected or connected hydrogen/deuterium atoms from the measure calc
 ##Disorder parts
 Part codes for the measurements. Code **01 02** will analyse parts 0 and 1 together in a single measurement and parts 0 and 2 in another one. 
 
-#Options 2
+#Options 3
 ##SHAPE executable
 Path to the SHAPE 2.1 executable (**shape.exe**/**shape_2.1.bat**). Saved between sessions. Leave empty to search **PATH**.
 
-#Options 3
+#Options 4
 ##cosmochlore executable
 Path to the cosmochlore executable (1.2.0+). Saved between sessions. Leave empty to search **PATH**.
 
-#Options 4
+#Options 5
 ##Reload ALL
 Reloads the plugin's Python code.
 
@@ -68,14 +71,11 @@ Writes the refinement model's atom list to **orm.txt**.
 ##SHAPE
 Prints whether **shape** was found on **PATH**.
 
-#Cosmochlore
-Shape and symmetry measures via the cosmochlore engine: CShM, CSoM, ODis. URL[https://github.com/Yluro/cosmochlore]
-
 #Cosmochlore Status
-Whether a **cosmochlore** executable (1.2.0+) was found. Every button below needs this to be green.
+Whether a **cosmochlore** executable (1.2.0+) was found. The Run button below needs this to be green. URL[https://github.com/Yluro/cosmochlore]
 
-#CShM
-Continuous Shape Measures: compares the selection to built-in and user-defined reference polyhedra. Same selection rule as SHAPE analysis.
+#Continuous Shape Measures
+CShM: compares the selection to built-in and user-defined reference polyhedra. Same selection rule as SHAPE analysis.
 
 #CShM 1
 ##Run CShM
@@ -100,8 +100,34 @@ One checkbox per **.yaml** file in **user_shapes/**. Only checked ones are used;
 ##Open user defined shapes folder
 Opens the **user_shapes** folder, creating it if needed.
 
-#CSoM
-Continuous Symmetry Operation Measures: how well the selection matches given point groups. Slower than CShM/ODis, more so with more point groups
+#CShM 7
+Every CShM run saved for this structure (in **cosmochlore/**), one per centre and disorder component: each **_ideal.xyz** or **_cshm_table.csv** found. Runs that saved neither are not listed.
+
+#CShM 8
+**Shape** browses the run's shapes, best (lowest CShM) first, and **CShM** shows the value for the one picked, which is also the shape drawn. **Draw**, shown while Show Ideal Polyhedra is checked, leaves a run out of the drawing when unticked. Runs with only a **.csv** have nothing to draw. Both choices last this session only.
+##Delete
+Deletes the run's **_ideal.xyz** and **_cshm_table.csv**, after asking. The input **.xyz** goes too unless a CSoM or ODis output of the same centre still uses it.
+
+#Ideal polyhedra
+##Show Ideal Polyhedra
+Draws the ideal polyhedron of every centre measured with CShM over the structure, and redraws after each CShM run (which then also writes the **_ideal.xyz**). Its drawing settings appear below, and a **Draw** column in the runs table, while this is checked. Unchecking hides the polyhedra.
+
+#Ideal polyhedra 1
+##Opacity %
+Face opacity. **0** draws only edges and vertices. Saved between sessions.
+##Redraw
+Draws the polyhedra again, e.g. after **_ideal.xyz** files changed outside Timeo.
+
+#Ideal polyhedra 2
+##Edges
+Draws the polyhedron edges.
+##Vertex spheres
+Marks the ideal vertex positions with small spheres.
+##Colour by
+**shape**: one colour per shape, to compare centres. **centre**: one colour per run, to tell centres and disorder components apart. **element**: the colour Olex2 draws the central atom in.
+
+#Continuous Symmetry Operation Measures
+CSoM: how well the selection matches given point groups. Slower than CShM/ODis, more so with more point groups
 or atoms.
 
 #CSoM 1
@@ -147,8 +173,8 @@ Maximum number of Nelder-Mead iterations spent refining each seed. Default **200
 ##Tolerance
 Convergence tolerance of the Nelder-Mead refinement, as a power of ten: the box holds **N** for a tolerance of **1e-N**. Default **6** (1e-6).
 
-#ODis
-Octahedral Distortion Parameters: a second, independent octahedral distortion implementation, via cosmochlore. Select the central atom of a 6-coordinate complex.
+#Octahedral Distortion Parameters
+ODis: a second, independent octahedral distortion implementation, via cosmochlore. Select the central atom of a 6-coordinate complex.
 
 #ODis 1
 ##Run ODis
