@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 José Serrano Guarinos
 
-__version__ = '1.2.0'
+__version__ = '1.3.0'
 
 import os
 import re
@@ -24,6 +24,7 @@ from helper_functions import (get_neighbours, get_neighbours_on_sel, get_selecte
                               get_xyz_sel, print_console_bs, print_orm, test_selection_class, as_bool)
 from octahedral_distortion import CalcDistortion
 from selection import AtomSelection, split_by_parts
+import update_check
 
 debug = bool(OV.GetParam("olex2.debug", False))
 
@@ -608,6 +609,78 @@ def cosmochlore_status_html():
     return f"<font color='{OV.GetParam('gui.green')}'>{text}</font>"
 
 
+def _update_cache_file():
+    return os.path.join(OV.DataDir(), 'timeo_update.json')
+
+
+def _update_check_enabled():
+    return as_bool(OV.GetParam('timeo.check_for_updates', True))
+
+
+def _refresh_update_cache(verbose):
+    # The check runs in a thread, so Schedule hands the result back to Olex2's main thread,
+    # as threads_imp.py does for the news image.
+    update_check.refresh_in_background(
+        _update_cache_file(),
+        on_done=lambda: olx.Schedule(1, f'spy.Timeo.announce_update({verbose})'))
+
+
+def _print_update_notice(verbose=False):
+    cache = update_check.read_cache(_update_cache_file())
+    newer = update_check.newer_release(__version__, cache)
+    if newer:
+        tag, url = newer
+        print(f'Timeo {tag} is available (you have {__version__}). Get it from: {url}')
+    elif verbose and cache.get('ok'):
+        print(f'Timeo {__version__} is up to date.')
+    elif verbose:
+        print('Could not reach GitHub to check for Timeo updates.')
+
+
+def start_update_check():
+    """Checks GitHub for a newer Timeo release, at most once a day and once per session."""
+    # Timeo.py runs twice on load (reload_all re-imports it), so a module global would not do.
+    if OV.GetVar('timeo_update_check_started', '') == 'true':
+        return
+    OV.SetVar('timeo_update_check_started', 'true')
+    if not _update_check_enabled() or not OV.canNetwork(show_msg=False):
+        return
+    if update_check.is_due(update_check.read_cache(_update_cache_file())):
+        _refresh_update_cache(verbose=False)
+    else:
+        _print_update_notice()
+
+
+def announce_update(verbose=False):
+    """Prints the result of a finished update check and redraws the panel."""
+    _print_update_notice(as_bool(verbose))
+    olex.m('html.Update()')
+
+
+def CheckForUpdates():
+    """Asks GitHub for the latest Timeo release now, ignoring the daily cache."""
+    if not OV.canNetwork():
+        return
+    print('Checking GitHub for Timeo updates...')
+    _refresh_update_cache(verbose=True)
+
+
+def update_status_html():
+    grey = OV.GetParam('gui.grey')
+    if not _update_check_enabled():
+        return f"<font color='{grey}'>Timeo {__version__}. The update check is off.</font>"
+
+    cache = update_check.read_cache(_update_cache_file())
+    newer = update_check.newer_release(__version__, cache)
+    if newer:
+        tag, url = newer
+        return (f"<font color='{OV.GetParam('gui.orange')}'>Timeo {tag} is available "
+                f"(you have {__version__}): <a href='shell {url}'>download</a></font>")
+    if 'tag' not in cache:
+        return f"<font color='{grey}'>Timeo {__version__}. Not checked for updates yet.</font>"
+    return f"<font color='{OV.GetParam('gui.green')}'>Timeo {__version__} is up to date.</font>"
+
+
 class Timeo(PT):
     def __init__(self):
         super(Timeo, self).__init__()
@@ -659,6 +732,11 @@ class Timeo(PT):
         OV.registerFunction(reload_plugin, True, "Timeo")
         OV.registerFunction(open_plugin_folder, True, "Timeo")
 
+        # Update check.
+        OV.registerFunction(CheckForUpdates, True, "Timeo")
+        OV.registerFunction(announce_update, True, "Timeo")
+        OV.registerFunction(update_status_html, False, "Timeo")
+
         # Debug panel helpers.
         OV.registerFunction(get_selected_atoms, True, "Timeo")
         OV.registerFunction(get_neighbours, True, "Timeo")
@@ -667,6 +745,9 @@ class Timeo(PT):
         OV.registerFunction(print_console_bs, False, 'Timeo')
         OV.registerFunction(print_orm, False, 'Timeo')
         OV.registerFunction(test_selection_class, False, 'Timeo')
+
+        # After registering, so announce_update exists when the check finishes.
+        start_update_check()
     # END Generated =======================================
 
 
