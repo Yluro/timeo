@@ -23,6 +23,24 @@ timeo{
       .help = Explicit path to the SHAPE executable. Leave empty to search PATH.
   }
 
+  overlay{
+    show = False
+      .type = bool
+      .help = Draw the ideal polyhedra of every CShM run on this structure over the model, and redraw after each run. CShM writes the _ideal.xyz file while this is on.
+    opacity = 35
+      .type = int(value_min=0, value_max=100)
+      .help = Face opacity in percent. 0 draws only the edges and vertices.
+    edges = True
+      .type = bool
+      .help = Draw the polyhedron edges.
+    markers = True
+      .type = bool
+      .help = Draw small spheres at the ideal vertex positions.
+    colour_by = 'shape'
+      .type = str
+      .help = Colour by shape (one colour per shape), centre (one colour per run) or element (the colour Olex2 draws the central atom in).
+  }
+
   cosmochlore{
     exe_path = ''
       .type = str
