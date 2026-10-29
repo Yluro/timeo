@@ -16,6 +16,9 @@ timeo{
   part_codes = ''
     .type = str
     .help = Space-separated disorder part codes, each measured as one structure. Every digit of a code is a part: "01 02" measures parts 0+1 and 0+2, "34" parts 3+4, "0" part 0 only. Leave empty to measure part 0 with each other part.
+  check_for_updates = True
+    .type = bool
+    .help = Check GitHub once a day for a newer Timeo release and say so in the console.
 
   shape{
     exe_path = ''
