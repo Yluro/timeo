@@ -18,6 +18,7 @@ from autoshape import (ShapeCalculation, ShapeError, can_find_shape_msg, locate_
                        print_shape_table, run_shape)
 from constants import octadist_citation, shape21_citation
 import cosmochlore
+import ideal_overlay
 from helper_functions import (get_neighbours, get_neighbours_on_sel, get_selected_atoms,
                               get_xyz_sel, print_console_bs, print_orm, test_selection_class, as_bool)
 from octahedral_distortion import CalcDistortion
@@ -292,7 +293,7 @@ def autoOCTADIST():
 _COSMOCHLORE_CREDIT = 'Computed using cosmochlore (https://github.com/Yluro/cosmochlore).'
 
 
-def autoCSHM(shapes=None, user_shapes=None, table=None, ideal=None):
+def autoCSHM(shapes=None, user_shapes=None, table=None, ideal=None, show=None):
     """Continuous Shape Measures via cosmochlore, on the current selection.
 
     `shapes`: built-in reference-shape indices to restrict to (None = all
@@ -304,6 +305,8 @@ def autoCSHM(shapes=None, user_shapes=None, table=None, ideal=None):
     having any fallback logic of its own to hide the error.
     `table`/`ideal`: also write the corresponding cosmochlore output files
     next to the .xyz; default to the matching phil params when not given.
+    `show`: draw the ideal polyhedra of every run on this structure over the model
+    (writes the _ideal.xyz even if `ideal` is off); defaults to timeo.overlay.show.
     """
     print('\n' + '-' * 50)
     print('Continuous Shape Measures using cosmochlore')
@@ -319,6 +322,8 @@ def autoCSHM(shapes=None, user_shapes=None, table=None, ideal=None):
         table = as_bool(OV.GetParam('timeo.cosmochlore.cshm.table', False))
     if ideal is None:
         ideal = as_bool(OV.GetParam('timeo.cosmochlore.cshm.ideal', False))
+    if show is None:
+        show = as_bool(OV.GetParam('timeo.overlay.show', False))
 
     structures, centered = _prepare_structures(olex.f('sel()'))
     if structures is None:
@@ -326,20 +331,89 @@ def autoCSHM(shapes=None, user_shapes=None, table=None, ideal=None):
 
     workdir = _cosmochlore_workdir()
     ran_any = False
+    ideal_paths = []
     for i, structure in enumerate(structures):
         xyz_path = os.path.join(workdir, f'{olx.FileName()}_{structure.labels[0]}_{i}.xyz')
         cosmochlore.write_xyz(structure, xyz_path, comment=f'{olx.FileName()} part {i}')
 
         try:
-            args = cosmochlore.build_cshm_args(xyz_path, centered, shapes, user_shapes, table, ideal)
+            args = cosmochlore.build_cshm_args(xyz_path, centered, shapes, user_shapes, table,
+                                               ideal or show)
             print(cosmochlore.trim_banner(cosmochlore.run_cosmochlore(exe, args, cwd=workdir)))
             ran_any = True
         except cosmochlore.CosmochloreError as e:
             print(f'cshm failed for part {i}: {e}')
+            continue
 
+        # cosmochlore names it after the input: <stem>_ideal.xyz, next to the .xyz.
+        ideal_path = os.path.splitext(xyz_path)[0] + '_ideal.xyz'
+        if (ideal or show) and os.path.isfile(ideal_path):
+            ideal_paths.append(ideal_path)
+
+    if ideal_paths:
+        ideal_overlay.record_run(ideal_paths, centered)
+        if show:
+            ideal_overlay.draw_ideal()
     if ran_any:
+        # Refreshes the CShM runs table.
+        olex.m('html.Update()')
         print(_COSMOCHLORE_CREDIT)
     return ran_any
+
+
+def show_ideal_overlay(state):
+    """Show Ideal Polyhedra checkbox: saves the param, draws or clears, and shows or hides the settings."""
+    SetOption('timeo.overlay.show', state)
+    if as_bool(state):
+        ideal_overlay.draw_ideal()
+    else:
+        ideal_overlay.clear_ideal()
+    olex.m('html.Update()')
+
+
+def SetOverlayOption(param, value):
+    """Sets and saves a timeo.overlay drawing option and applies it to the drawn overlay."""
+    SetOption(param, value)
+    ideal_overlay.option_changed(param)
+
+
+# Registered instead of the ideal_overlay functions themselves: reload_all() reloads
+# this module first, so those would keep running the code from before a Reload ALL.
+def draw_ideal():
+    """Draws the chosen ideal shape of every ticked CShM run."""
+    return ideal_overlay.draw_ideal()
+
+
+def clear_ideal():
+    """Hides every drawn ideal polyhedron."""
+    ideal_overlay.clear_ideal()
+
+
+def set_ideal_run_visible(stem, state):
+    """Runs table Draw checkbox: includes or leaves out one CShM run."""
+    ideal_overlay.set_ideal_run_visible(stem, state)
+
+
+def set_ideal_run_shape(stem, shape):
+    """Runs table combo: the shape shown and drawn for one CShM run."""
+    ideal_overlay.set_ideal_run_shape(stem, shape)
+    # Shows the new shape's CShM.
+    olex.m('html.Update()')
+
+
+def delete_cshm_run(stem):
+    """Runs table Delete button: deletes one CShM run's files after asking."""
+    if ideal_overlay.delete_run(stem):
+        olex.m('html.Update()')
+
+
+def cshm_runs_html():
+    return ideal_overlay.cshm_runs_html()
+
+
+def ideal_overlay_shown():
+    """Whether Show Ideal Polyhedra is checked, for the panel's #includeif."""
+    return ideal_overlay.shown()
 
 
 def autoCSOM(point_groups=None, mode=None, vector=None, full=None, table=None,
@@ -556,6 +630,17 @@ class Timeo(PT):
         OV.registerFunction(save_params, True, "Timeo")
         OV.registerFunction(user_shapes_checkboxes_html, False, "Timeo")
         OV.registerFunction(open_user_shapes_folder, True, "Timeo")
+
+        # Ideal polyhedra overlay in the 3D view.
+        OV.registerFunction(draw_ideal, True, "Timeo")
+        OV.registerFunction(clear_ideal, True, "Timeo")
+        OV.registerFunction(set_ideal_run_visible, True, "Timeo")
+        OV.registerFunction(set_ideal_run_shape, True, "Timeo")
+        OV.registerFunction(delete_cshm_run, True, "Timeo")
+        OV.registerFunction(cshm_runs_html, False, "Timeo")
+        OV.registerFunction(ideal_overlay_shown, False, "Timeo")
+        OV.registerFunction(show_ideal_overlay, True, "Timeo")
+        OV.registerFunction(SetOverlayOption, True, "Timeo")
 
         # Options panel.
         OV.registerFunction(reload_plugin, True, "Timeo")
