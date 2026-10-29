@@ -45,7 +45,6 @@ EDGE_RADIUS = 0.035
 EDGE_SIDES = 8
 
 _IDEAL = '_ideal.xyz'
-_TABLE = '_cshm_table.csv'
 _RUN_FILE = re.compile(r'^(?P<label>.+)_(?P<part>\d+)(?P<kind>_ideal\.xyz|_cshm_table\.csv)$')
 # Maps each run's file stem to whether it was centered, written by record_run().
 _REGISTRY = 'ideal_runs.json'
@@ -57,9 +56,9 @@ _drawn = []
 _draw_count = 0
 # Face objects currently drawn and their colours, so opacity can change in place.
 _faces = {}
-# GUI run list state, this session only: stems of unticked runs, and the shape
+# Runs table state, this session only: stems of runs with Draw ticked, and the shape
 # picked for each run when it isn't the best match.
-_hidden_runs = set()
+_ticked = set()
 _run_shapes = {}
 
 
@@ -284,12 +283,10 @@ def _write_registry(registry):
 
 
 def record_run(paths, centered):
-    """Remembers whether a CShM run's _ideal.xyz files are centered, and unhides them."""
+    """Remembers whether a CShM run's _ideal.xyz files are centered."""
     registry = _read_registry()
     for path in paths:
-        stem = os.path.basename(path)[:-len(_IDEAL)]
-        registry[stem] = bool(centered)
-        _hidden_runs.discard(stem)
+        registry[os.path.basename(path)[:-len(_IDEAL)]] = bool(centered)
     _write_registry(registry)
 
 
@@ -389,25 +386,33 @@ def draw_runs(runs, verbose=False):
 
 
 def draw_ideal(verbose=True):
-    """Draws the chosen ideal shape of every ticked run."""
-    runs = [run for run in find_runs() if run['ideal'] and run['stem'] not in _hidden_runs]
-    if not runs:
-        if verbose:
+    """Draws the chosen ideal shape of every ticked run, or clears the overlay if none is."""
+    runs = find_runs()
+    ticked_runs = [run for run in runs if ticked(run)]
+    if not ticked_runs:
+        if verbose and any(run['ideal'] for run in runs):
+            print('No CShM run is ticked to draw: tick Draw in the CShM runs table.')
+        elif verbose:
             print('No ideal polyhedra for this structure: run CShM with '
-                  '"Show Ideal Polyhedra" or "Ideal polyhedra .xyz" checked.')
+                  '"Ideal polyhedra .xyz" checked.')
         clear_ideal()
         return False
-    return draw_runs(runs, verbose)
+    return draw_runs(ticked_runs, verbose)
 
 
-def shown():
-    return as_bool(OV.GetParam('timeo.overlay.show', False))
+def ticked(run):
+    """Whether the run's Draw box is ticked; never for a run without an _ideal.xyz."""
+    return bool(run['ideal']) and run['stem'] in _ticked
+
+
+def any_ticked():
+    """Whether any run on this structure is ticked to draw."""
+    return any(ticked(run) for run in find_runs())
 
 
 def refresh():
-    """Quietly redraws the overlay if it is drawn or timeo.overlay.show is on."""
-    if _drawn or shown():
-        draw_ideal(verbose=False)
+    """Quietly redraws the ticked runs, or clears the overlay if none is ticked."""
+    draw_ideal(verbose=False)
 
 
 def option_changed(param):
@@ -422,12 +427,20 @@ def option_changed(param):
 
 
 def set_ideal_run_visible(stem, state):
-    """Includes or leaves out one run, then redraws."""
+    """Ticks or unticks one run's Draw box, then redraws. False for a run without an _ideal.xyz."""
+    run = next((r for r in find_runs() if r['stem'] == stem), None)
+    if run is None or not run['ideal']:
+        if as_bool(state):
+            print(f'Error: no ideal polyhedra to draw for {run["title"] if run else stem}. '
+                  f'Rerun cosmochlore (Run CShM) on it with "Ideal polyhedra .xyz" checked.')
+        return False
+
     if as_bool(state):
-        _hidden_runs.discard(stem)
+        _ticked.add(stem)
     else:
-        _hidden_runs.add(stem)
+        _ticked.discard(stem)
     refresh()
+    return True
 
 
 def set_ideal_run_shape(stem, shape):
@@ -463,41 +476,36 @@ def delete_run(stem):
     registry = _read_registry()
     if registry.pop(stem, None) is not None:
         _write_registry(registry)
-    _hidden_runs.discard(stem)
+    _ticked.discard(stem)
     _run_shapes.pop(stem, None)
     refresh()
     return True
 
 
 def cshm_runs_html():
-    """The CShM runs table: per run its centre, a shape picker, that shape's CShM and a Delete
-    button, plus a checkbox to draw it while the overlay is shown."""
+    """The CShM runs table: per run a checkbox to draw it, its centre, a shape picker, that
+    shape's CShM and a Delete button."""
     runs = find_runs()
     if not runs:
         return ('<i>No CShM results saved for this structure yet: run CShM with '
                 '"Results .csv" or "Ideal polyhedra .xyz" checked.</i>')
 
-    draw = shown()
     bg = olx.GetVar('HtmlTableBgColour', '#ffffff')
     combo_height = olx.GetVar('HtmlComboHeight', '20')
     button_height = olx.GetVar('HtmlInputHeight', '20')
-    columns = ([('Draw', 10)] if draw else []) + [('Centre', 20 if draw else 30), ('Shape', 35),
-                                                  ('CShM', 15), ('', 20)]
+    columns = [('Draw', 10), ('Centre', 20), ('Shape', 35), ('CShM', 15), ('', 20)]
     rows = [''.join(f'<td align="center" width="{width}%"><b>{title}</b></td>'
                     for title, width in columns)]
     for run in runs:
         stem = run['stem']
         key = re.sub(r'[^A-Za-z0-9_-]', '_', stem)
-        cells = []
-        if draw and run['ideal']:
-            checked = 'false' if stem in _hidden_runs else 'true'
-            cells.append(
-                f'<input type="checkbox" name="CShMDraw_{key}" checked="{checked}" '
-                f'onclick="spy.Timeo.set_ideal_run_visible(\'{stem}\', html.GetState(\'~name~\'))">')
-        elif draw:
-            # Nothing to draw without an _ideal.xyz.
-            cells.append('-')
-        cells.append(f'<b>{run["title"]}</b>')
+        # Unticked without an _ideal.xyz: ticking it then only prints how to get one.
+        checked = 'true' if ticked(run) else 'false'
+        cells = [
+            f'<input type="checkbox" name="CShMDraw_{key}" checked="{checked}" '
+            f'onclick="spy.Timeo.set_ideal_run_visible(\'{stem}\', html.GetState(\'~name~\'))">',
+            f'<b>{run["title"]}</b>',
+        ]
 
         results = read_results(run)
         if results:

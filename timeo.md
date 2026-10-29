@@ -88,7 +88,7 @@ Options for this CShM run.
 ##Results CSV
 Also saves a **_cshm_table.csv** file.
 ##Ideal Polyhedra XYZ
-Also saves a **_ideal.xyz** file with the aligned reference shapes.
+Also saves a **_ideal.xyz** file with the aligned reference shapes, needed to draw them from the runs table below.
 
 #CShM 4
 Custom reference shapes beyond the built-in 90.
@@ -104,27 +104,22 @@ Opens the **user_shapes** folder, creating it if needed.
 Every CShM run saved for this structure (in **cosmochlore/**), one per centre and disorder component: each **_ideal.xyz** or **_cshm_table.csv** found. Runs that saved neither are not listed.
 
 #CShM 8
-**Shape** browses the run's shapes, best (lowest CShM) first, and **CShM** shows the value for the one picked, which is also the shape drawn. **Draw**, shown while Show Ideal Polyhedra is checked, leaves a run out of the drawing when unticked. Runs with only a **.csv** have nothing to draw. Both choices last this session only.
+**Draw** draws the run's ideal polyhedron over the structure; the appearance settings appear below the table while at least one run is ticked. A run with only a **.csv** has no **_ideal.xyz** to draw: ticking it prints an error asking to rerun CShM with **Ideal polyhedra .xyz** checked. **Shape** browses the run's shapes, best (lowest CShM) first, and **CShM** shows the value for the one picked, which is also the shape drawn. Both choices last this session only.
 ##Delete
 Deletes the run's **_ideal.xyz** and **_cshm_table.csv**, after asking. The input **.xyz** goes too unless a CSoM or ODis output of the same centre still uses it.
 
-#Ideal polyhedra
-##Show Ideal Polyhedra
-Draws the ideal polyhedron of every centre measured with CShM over the structure, and redraws after each CShM run (which then also writes the **_ideal.xyz**). Its drawing settings appear below, and a **Draw** column in the runs table, while this is checked. Unchecking hides the polyhedra.
-
 #Ideal polyhedra 1
-##Opacity %
-Face opacity. **0** draws only edges and vertices. Saved between sessions.
-##Redraw
-Draws the polyhedra again, e.g. after **_ideal.xyz** files changed outside Timeo.
-
-#Ideal polyhedra 2
+Appearance of the drawn polyhedra, saved between sessions.
+##Opacity
+Face opacity in percent. **0** draws only edges and vertices.
 ##Edges
 Draws the polyhedron edges.
-##Vertex spheres
+##Vertices
 Marks the ideal vertex positions with small spheres.
-##Colour by
+##Colour
 **shape**: one colour per shape, to compare centres. **centre**: one colour per run, to tell centres and disorder components apart. **element**: the colour Olex2 draws the central atom in.
+##Redraw
+Draws the polyhedra again, e.g. after **_ideal.xyz** files changed outside Timeo.
 
 #Continuous Symmetry Operation Measures
 CSoM: how well the selection matches given point groups. Slower than CShM/ODis, more so with more point groups
@@ -172,6 +167,14 @@ Number of candidate symmetry-axis directions, spread over a Fibonacci hemisphere
 Maximum number of Nelder-Mead iterations spent refining each seed. Default **200**.
 ##Tolerance
 Convergence tolerance of the Nelder-Mead refinement, as a power of ten: the box holds **N** for a tolerance of **1e-N**. Default **6** (1e-6).
+
+#CSoM 8
+Every CSoM run saved for this structure (in **cosmochlore/**), one per centre and disorder component: each **_csom_table.csv**, **_details.csv**, **_operated.xyz** or **_merged.mol2** found.
+
+#CSoM 9
+**Point group** browses the run's point groups, best (lowest CSoM) first, and **CSoM** shows the value for the one picked. The choice lasts this session only. Only the **_csom_table.csv** holds the CSoM, so a run saved without **Summary .csv** lists its point groups and shows **no .csv**.
+##Delete
+Deletes all of the run's CSoM files, after asking. The input **.xyz** goes too unless a CShM or ODis output of the same centre still uses it.
 
 #Octahedral Distortion Parameters
 ODis: a second, independent octahedral distortion implementation, via cosmochlore. Select the central atom of a 6-coordinate complex.
