@@ -95,16 +95,22 @@ _**Note:** I push development changes constantly to the master branch. You could
 
 ### CShM runs table
 The bottom of the Continuous Shape Measures tab lists every CShM run saved for the structure: one row per measured centre and disorder component, found as `_ideal.xyz` or `_cshm_table.csv` files in `<FilePath>/cosmochlore/`. Runs that saved neither are not listed. Per run:
+- `Draw`: draws the run's ideal polyhedron over the structure. A run with only a `.csv` has nothing to draw: ticking it prints an error asking to rerun CShM with `Ideal polyhedra .xyz` checked.
 - `Shape`: the run's shapes, best (lowest CShM) first. `CShM` shows the value for the one picked, which is also the shape drawn.
 - `Delete`: deletes the run's `_ideal.xyz` and `_cshm_table.csv` after asking, plus its input `.xyz` unless a CSoM or ODis output of the same centre still uses it.
 
-### Ideal polyhedra in the model
-Tick `Show Ideal Polyhedra` in the CShM options to draw the ideal polyhedra from CShM over the structure. Every run in the table with an `_ideal.xyz` is drawn at once and redrawn after each new run. While the box is ticked the drawing settings appear, and the runs table gets a `Draw` column to leave runs out:
-- `Opacity %`: face transparency. Set it to 0 to draw only edges and vertices.
-- `Edges` and `Vertex spheres`: draw the polyhedron edges and mark the ideal vertex positions.
-- `Colour by`: `shape` gives every shape its own colour, so centres are easy to compare; `centre` gives every run its own colour; `element` uses the colour Olex2 draws the central atom in.
+### CSoM runs table
+The bottom of the Continuous Symmetry Operation Measures tab lists every CSoM run saved for the structure the same way: one row per measured centre and disorder component, found as `_csom_table.csv`, `_details.csv`, `_operated.xyz` or `_merged.mol2` files in `<FilePath>/cosmochlore/`. Per run:
+- `Point group`: the run's point groups, best (lowest CSoM) first. `CSoM` shows the value for the one picked. Only `_csom_table.csv` holds the CSoM, so a run saved without `Summary .csv` lists its point groups and shows `no .csv`.
+- `Delete`: deletes all of the run's CSoM files after asking, plus its input `.xyz` unless a CShM or ODis output of the same centre still uses it.
 
-Opacity, edges, vertex spheres and colour are saved between sessions; the runs table's shape and Draw choices last for the session.
+### Ideal polyhedra in the model
+Every run ticked in the table's `Draw` column is drawn over the structure at once, and redrawn when CShM is rerun on it. Only runs with an `_ideal.xyz` can be drawn, so run CShM with `Ideal polyhedra .xyz` checked. While at least one run is ticked, a row of appearance settings appears below the table:
+- `Opacity`: face transparency in percent. Set it to 0 to draw only edges and vertices.
+- `Edges` and `Vertices`: draw the polyhedron edges and mark the ideal vertex positions.
+- `Colour`: `shape` gives every shape its own colour, so centres are easy to compare; `centre` gives every run its own colour; `element` uses the colour Olex2 draws the central atom in.
+
+Opacity, edges, vertices and colour are saved between sessions; the runs table's shape and Draw choices last for the session.
 
 | Function                                | Description                                                                         |
 |-----------------------------------------|-------------------------------------------------------------------------------------|
