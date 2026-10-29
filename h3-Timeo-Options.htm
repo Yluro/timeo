@@ -58,6 +58,23 @@
     $-
 <!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
 
+<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=Options_6; help_ext=Options_6;1; -->
+  <td align='right' width="30%"><b>Check for updates: </b></td>
+    $+
+      html.Snippet("gui/snippets/input-checkbox-td",
+      "name=CHECK_UPDATES",
+      "checked=spy.GetParam('timeo.check_for_updates', True)",
+      "onclick=spy.Timeo.SetOption('timeo.check_for_updates', html.GetState('~name~'))>>html.Update()",
+      "td1=<td align='left' width="4%">"
+      )
+    $-
+  <td align='left' width="66%">
+    $+
+      spy.Timeo.update_status_html()
+    $-
+  </td>
+<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
+
 <!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=Options_5; help_ext=Options_5;1; -->
     $+
     html.Snippet(GetVar(default_link),
@@ -75,5 +92,11 @@
     html.Snippet(GetVar(default_link),
     "value=Open Folder",
     "onclick=spy.Timeo.open_plugin_folder()",
+    )$-
+
+    $+
+    html.Snippet(GetVar(default_link),
+    "value=Check Updates",
+    "onclick=spy.Timeo.CheckForUpdates()",
     )$-
 <!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
