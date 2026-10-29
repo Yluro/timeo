@@ -20,6 +20,27 @@ jobs:
           # Full history + tags, so we can diff against the previous tag.
           fetch-depth: 0
 
+      # The plugin's update check compares __version__ with the latest release
+      # tag, so a release whose __version__ was not bumped would tell its own
+      # users to update.
+      - name: Check tag matches __version__
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          # Only vX.Y.Z tags are stable releases. Pre-release tags are skipped.
+          if ! printf '%s' "$TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Not a vX.Y.Z tag, skipping."
+            exit 0
+          fi
+
+          VERSION="$(sed -nE "s/^__version__ = '([^']+)'.*/\1/p" Timeo.py)"
+          if [ "v${VERSION}" != "$TAG" ]; then
+            echo "::error file=Timeo.py::Tag ${TAG} does not match __version__ = '${VERSION}' in Timeo.py. Bump __version__, then move the tag."
+            exit 1
+          fi
+
       - name: Build changelog
         id: changelog
         env:
