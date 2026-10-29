@@ -1,5 +1,5 @@
 <!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=Ideal_polyhedra_1; help_ext=Ideal_polyhedra_1;1; -->
-  <td align='left' width="20%"><b>Opacity %: </b></td>
+  <td align='left' width="11%"><b>Opacity: </b></td>
     $+
       html.Snippet("gui/snippets/input-spin-td",
       "name=IDEAL_OPACITY",
@@ -7,43 +7,39 @@
       "onchange=spy.Timeo.SetOverlayOption('timeo.overlay.opacity', html.GetValue('~name~'))",
       "min=0",
       "max=100",
-      "td1=<td align='left' width="20%">"
+      "td1=<td align='left' width="12%">"
       )
     $-
-  <td align='right' width="60%">
-    <a href="spy.Timeo.draw_ideal()">Redraw</a>
-  </td>
-<!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
-
-<!-- #include tool-row-help gui/blocks/tool-row-help.htm;name=Ideal_polyhedra_2; help_ext=Ideal_polyhedra_2;1; -->
-  <td align='left' width="12%"><b>Edges: </b></td>
+  <td align='right' width="10%"><b>Edges: </b></td>
     $+
       html.Snippet("gui/snippets/input-checkbox-td",
       "name=IDEAL_EDGES",
       "checked=spy.GetParam('timeo.overlay.edges', True)",
       "onclick=spy.Timeo.SetOverlayOption('timeo.overlay.edges', html.GetState('~name~'))",
-      "td1=<td align='left' width="6%">"
+      "td1=<td align='left' width="5%">"
       )
     $-
-  <td align='left' width="20%"><b>Vertex spheres: </b></td>
+  <td align='right' width="12%"><b>Vertices: </b></td>
     $+
       html.Snippet("gui/snippets/input-checkbox-td",
       "name=IDEAL_MARKERS",
       "checked=spy.GetParam('timeo.overlay.markers', True)",
       "onclick=spy.Timeo.SetOverlayOption('timeo.overlay.markers', html.GetState('~name~'))",
-      "td1=<td align='left' width="6%">"
+      "td1=<td align='left' width="5%">"
       )
     $-
-  <td align='right' width="20%"><b>Colour by: </b></td>
-  <td align='left' width="36%">
+  <td align='right' width="10%"><b>Colour: </b></td>
+  <td align='left' width="22%">
     $+
       html.Snippet("gui/snippets/input-combo",
       "name=IDEAL_COLOUR_BY",
-      "width=90",
       "items='shape;centre;element'",
       "value=spy.GetParam('timeo.overlay.colour_by', 'shape')",
       "onchange=spy.Timeo.SetOverlayOption('timeo.overlay.colour_by', html.GetValue('~name~'))",
       )
     $-
+  </td>
+  <td align='right' width="13%">
+    <a href="spy.Timeo.draw_ideal()">Redraw</a>
   </td>
 <!-- #include row_table_off gui/blocks/row_table_off.htm;1; -->
