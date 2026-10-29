@@ -24,9 +24,6 @@ timeo{
   }
 
   overlay{
-    show = False
-      .type = bool
-      .help = Draw the ideal polyhedra of every CShM run on this structure over the model, and redraw after each run. CShM writes the _ideal.xyz file while this is on.
     opacity = 35
       .type = int(value_min=0, value_max=100)
       .help = Face opacity in percent. 0 draws only the edges and vertices.
