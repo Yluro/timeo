@@ -52,6 +52,13 @@ Opens this plugin's phil parameter editor.
 ##Open Folder
 Opens the plugin's install folder in the file browser.
 
+##Check Updates
+Asks GitHub for the latest Timeo release now and prints the result to the console.
+
+#Options 6
+##Check for updates
+When checked, Timeo asks GitHub once a day, in the background, whether a newer release is out, and prints a note to the console if so. URL[https://github.com/Yluro/timeo/releases]
+
 #Timeo Debug
 Low-level diagnostics for the selection/refinement-model machinery.
 
